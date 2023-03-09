@@ -1,0 +1,119 @@
+-- TIME PROFIT ANALYSIS
+/* 1a. Write a query that returns the total profit made by BuyBuy from 1Q11 to 4Q16 (all
+quarters of every year).*/
+
+SELECT sales_year, months, 
+CASE
+    WHEN months IN ( 1, 2, 3) THEN 'Q1'
+    WHEN months IN ( 4, 5, 6) THEN 'Q2'
+    WHEN months IN ( 7, 8, 9) THEN 'Q3'
+ELSE 'Q4'
+END AS Quarters, SUM(Profit) AS Total_Profit
+FROM sales_data
+GROUP BY 1,2,3
+ORDER BY 4 DESC
+
+/* Comment: December 2015 has the highest profit for all the quarter of the years */ 
+
+
+/* 1b. Write queries that return the total profit made by BuyBuy in Q2 of every year from
+2011 to 2016.*/
+
+SELECT DISTINCT sales_year, SUM(Profit) AS Total_Profit
+FROM sales_data 
+WHERE months IN (4, 5, 6)
+GROUP BY 1
+ORDER BY 2 DESC
+
+/* Comment: Second quarter of 2016 has the highest profit of all the second quarters of the year */
+
+/* 1c. Write a query that returns the annual profit made by BuyBuy from the year 2011 to
+2016. */
+
+SELECT DISTINCT sales_year, SUM(Profit) AS Total_Profit
+FROM sales_data 
+GROUP BY 1
+ORDER BY 2 DESC
+
+/* Comment: 2015 has the highest profit */
+
+-- REGION-PROFIT ANALYSIS
+/* 2a. Write 2 queries that return the countries where BuyBuy has made the most profit and
+also the least profit of all-time. Your query must display both results on the same
+output. */
+
+SELECT Cus_country, SUM(Profit) AS Total_profit,
+CASE
+   WHEN SUM(Profit) < 3000000 THEN 'least_profit'
+   WHEN SUM(Profit) > 10000000 THEN 'most_profit'
+ELSE NULL
+END AS Profit_rank
+FROM sales_data
+GROUP BY 1
+LIMIT 2
+
+/* Comment: France is the country with least profit while united states is the country with highest profit */
+
+/* 2b Write a query that shows the Top-10 most profitable countries for BuyBuy sales
+operations from 2011 to 2016 */
+
+SELECT cus_country, sales_year, SUM(Profit) AS Total_Profit
+FROM sales_data
+GROUP BY 1,2
+ORDER BY 3 DESC
+LIMIT 10
+
+/* Comment: united state is the country that has 50% of the top-10 most profitable countries */
+
+/* 2c. Write a query that shows the all-time Top-10 least profitable countries for BuyBuy
+sales operations. */
+
+SELECT cus_country, SUM(Profit) AS Total_Profit
+FROM sales_data
+GROUP BY 1
+ORDER BY 2 ASC
+LIMIT 10
+
+/* Comment: it is obvious france is generating low revenue  */
+
+
+-- PRODUCT-REVENUE ANALYSIS
+/* 3a. Write a query that ranks all product categories sold by Buybuy, from least amount to
+the most amount of all-time revenue generated.*/
+
+SELECT Prod_category, SUM(Revenue) AS Revenue_generated,
+CASE
+    WHEN SUM(Revenue) > 30000000 THEN 'most_income'
+    WHEN SUM(Revenue) > 10000000 THEN 'medium'
+    WHEN SUM(Revenue) > 5000000 THEN 'least_income'
+ELSE NULL
+END AS Revenue_rank
+FROM sales_data
+GROUP BY 1
+
+/* Comment: bikes product is generating most revenue */
+
+
+/* 3b Write a query that returns Top-2 product categories offered by Buybuy with an all-time
+high number of units sold. */
+
+SELECT DISTINCT Prod_category, SUM(Ord_quantity) AS Total_Unit_sold
+FROM sales_data
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 2
+
+/* Comment: accessories and clothing is the top 2 product categories offered by buybuy */
+
+
+/* 3c Write a query that shows the Top 10 highest-grossing products sold by BuyBuy based
+on all-time profits. */
+
+SELECT DISTINCT Prod_subcategory, SUM(Profit) AS Total_Profit
+FROM sales_data
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 10
+
+/* Comment: road-bikes is the most highest grossing products sold by buybuy */
+
